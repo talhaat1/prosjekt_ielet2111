@@ -1,0 +1,23 @@
+int main(void)
+{	ADC0_init();
+	ADC0_start();
+	PORTA.DIR |= PIN2_bm;
+	USART3_init(9600); // Initialiserer USART3 med 9600 baud.
+	stdout = &USART_stream; // Omdirigerer stdout til USART-streamen.
+	// Replace with your application code
+	// Defining USAR
+	while (1) {
+uint16_t adcVal = ADC0_read(); // Les ADC-verdien
+uint16_t R1 = 10000;
+float R2, logR2, volt;
+uint16_t B = 3950.0;
+float Temp;
+uint16_t Tempc;
+
+volt = (5.0/1023.0)*adcVal;
+R2 = R1 * (1023.0 / (float)adcVal - 1.0); // Beregn motstanden til thermistoren
+Temp = (1.0/ (((log(R2/R1))/B)+(1.0/298.15)));
+Tempc = Temp -273.15;
+printf("Temperaturen er:%d\r\n", (Tempc));
+	}
+}
