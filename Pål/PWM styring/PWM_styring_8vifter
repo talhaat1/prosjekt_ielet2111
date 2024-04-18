@@ -1,0 +1,55 @@
+/*
+ * PWM_settings.c
+ *
+ * Created: 20.03.2024 14:18:12
+ *  Author: palhe
+ */ 
+#include "PWM_settings.h"
+void TCA0_init(void) {	// set waveform output on PORT A
+	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTE_gc;
+	TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP2EN_bm // enable compare channel 0
+	| TCA_SINGLE_WGMODE_DSBOTTOM_gc; // set dual-slope PWM mode
+	TCA0.SINGLE.CMP2BUF = DUTY_CYCLE_EXAMPLE_VALUE; //duty cycle
+	TCA0.SINGLE.PERBUF = PERIOD_EXAMPLE_VALUE;	//Setter Hz
+	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV16_gc // set clock source (sys_clk/4)  //TCAprescaler
+	| TCA_SINGLE_ENABLE_bm; // start timer
+}
+
+
+void TCA0_init_split(void)
+{
+	/* set waveform output on PORT A */
+	PORTMUX.TCAROUTEA = PORTMUX_TCA0_PORTA_gc;
+	/* enable split mode */
+	TCA0.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm;
+	
+	TCA0.SPLIT.CTRLB = TCA_SPLIT_HCMP0EN_bm //Enable PA3 //PA2 og PA3 skal brukes til I2C så disse må endres. 
+	|TCA_SPLIT_LCMP2EN_bm; //Enable PA2
+
+	/* set the PWM frequencies and duty cycles */
+	TCA0.SPLIT.HCMP0 = DUTY_CYCLE_EXAMPLE_VALUE; //PA3
+ 	TCA0.SPLIT.LCMP2 = DUTY_CYCLE_EXAMPLE_VALUE; //PA2
+// 	
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV16_gc /* set clock source
+ (sys_clk/16) */
+ | TCA_SPLIT_ENABLE_bm; /* start timer */
+ }
+
+void TCA1_init(void) {
+	// Set waveform output on PORT A for TCA1
+	PORTMUX.TCAROUTEA = PORTMUX_TCA1_PORTB_gc;
+	/* enable split mode */
+	TCA1.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm;
+		
+	TCA1.SPLIT.CTRLB = 0xff; //Muligjør 6 utganger på TCB
+	/* set the PWM frequencies and duty cycles */
+	TCA1.SPLIT.HCMP0 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.HCMP1 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.HCMP2 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.LCMP0 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.LCMP1 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.LCMP2 = DUTY_CYCLE_EXAMPLE_VALUE;
+	TCA1.SPLIT.CTRLA = TCA_SPLIT_CLKSEL_DIV4_gc /* set clock source
+	(sys_clk/16) */
+	| TCA_SPLIT_ENABLE_bm; /* start timer */}
+
